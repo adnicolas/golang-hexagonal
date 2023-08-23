@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/adnicolas/golang-hexagonal/internal/platform/server/handler/health"
+	"github.com/adnicolas/golang-hexagonal/internal/platform/server/handler/users"
 	"github.com/gin-gonic/gin"
 )
 
@@ -30,4 +31,5 @@ func (s *Server) Run() error {
 
 func (s *Server) registerRoutes() {
 	s.engine.GET("/health", health.CheckHandler())
+	s.engine.POST("/user", users.CreateController())
 }
