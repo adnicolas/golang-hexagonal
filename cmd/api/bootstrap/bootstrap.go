@@ -8,6 +8,7 @@ const (
 )
 
 func Run() error {
+	// Server initialization
 	srv := server.New(host, port)
 	return srv.Run()
 }
