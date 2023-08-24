@@ -65,6 +65,7 @@ func TestController_Create(t *testing.T) {
 		result := recorder.Result()
 		defer result.Body.Close()
 
+		mock.AssertExpectationsForObjects(t, userRepository)
 		assert.Equal(t, http.StatusCreated, result.StatusCode)
 	})
 }
