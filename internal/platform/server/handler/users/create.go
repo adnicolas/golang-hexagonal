@@ -8,9 +8,8 @@ import (
 )
 
 type createRequest struct {
-	// TODO: Usar tipo uuid para robustecer validaciones
 	// binding property (validation) offered by Gin
-	Uuid     string/*uuid.UUID*/ `json:"uuid" binding:"required"`
+	Id       string `json:"id" binding:"required"`
 	Name     string `json:"name" binding:"required"`
 	Surname  string `json:"surname" binding:"required"`
 	Password string `json:"password" binding:"required"`
@@ -27,7 +26,7 @@ func CreateController(userRepository usuario.UserRepository) gin.HandlerFunc {
 			ctx.JSON(http.StatusBadRequest, err.Error())
 			return
 		}
-		user := usuario.NewUser(req.Uuid, req.Name, req.Surname, req.Password, req.Email)
+		user := usuario.NewUser(req.Id, req.Name, req.Surname, req.Password, req.Email)
 		if err := userRepository.Save(ctx, user); err != nil {
 			ctx.JSON(http.StatusInternalServerError, err.Error())
 			return

@@ -8,8 +8,7 @@ import (
 
 // Domain entity (data structure that represents a user)
 type User struct {
-	// TODO: Usar tipo uuid para robustecer validaciones
-	uuid     string //uuid.UUID
+	id       string
 	name     string
 	surname  string
 	password string
@@ -21,9 +20,9 @@ type UserRepository interface {
 }
 
 // NewUser creates a new user
-func NewUser(uuid string /*uuid.UUID*/, name string, surname string, password string, email string) User {
+func NewUser(id string, name string, surname string, password string, email string) User {
 	return User{
-		uuid:     uuid,
+		id:       id,
 		name:     name,
 		surname:  surname,
 		password: password,
@@ -31,9 +30,9 @@ func NewUser(uuid string /*uuid.UUID*/, name string, surname string, password st
 	}
 }
 
-// ID return the user UUID
-func (u User) ID() string /*uuid.UUID*/ {
-	return u.uuid
+// ID return the user ID
+func (u User) ID() string {
+	return u.id
 }
 
 func (u User) Name() string {
