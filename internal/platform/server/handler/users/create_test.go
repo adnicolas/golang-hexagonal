@@ -45,6 +45,26 @@ func TestController_Create(t *testing.T) {
 	})
 
 	t.Run("given a valid request it returns 201", func(t *testing.T) {
+		createUserReq := createRequest{
+			Uuid:     "c2f46a2b-9a8e-4614-8809-fedb86acf3b1",
+			Name:     "Adri",
+			Surname:  "Nico",
+			Password: "2023Password!",
+			Email:    "adrian.nicolas@geograma.com",
+		}
 
+		body, err := json.Marshal(createUserReq)
+		require.NoError(t, err)
+
+		request, err := http.NewRequest(http.MethodPost, "/user", bytes.NewBuffer(body))
+		require.NoError(t, err)
+
+		recorder := httptest.NewRecorder()
+		r.ServeHTTP(recorder, request)
+
+		result := recorder.Result()
+		defer result.Body.Close()
+
+		assert.Equal(t, http.StatusCreated, result.StatusCode)
 	})
 }
