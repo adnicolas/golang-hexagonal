@@ -26,7 +26,14 @@ func CreateController(userRepository usuario.UserRepository) gin.HandlerFunc {
 			ctx.JSON(http.StatusBadRequest, err.Error())
 			return
 		}
-		user := usuario.NewUser(req.Id, req.Name, req.Surname, req.Password, req.Email)
+		user, err := usuario.NewUser(req.Id, req.Name, req.Surname, req.Password, req.Email)
+		if err != nil {
+			/*if errors.Is(err, usuario.ErrInvalidUserId) {
+				log.Println(err.Error())
+			}*/
+			ctx.JSON(http.StatusBadRequest, err.Error())
+			return
+		}
 		if err := userRepository.Save(ctx, user); err != nil {
 			ctx.JSON(http.StatusInternalServerError, err.Error())
 			return

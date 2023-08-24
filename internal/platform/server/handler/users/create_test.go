@@ -68,4 +68,28 @@ func TestController_Create(t *testing.T) {
 		mock.AssertExpectationsForObjects(t, userRepository)
 		assert.Equal(t, http.StatusCreated, result.StatusCode)
 	})
+
+	t.Run("given a not valid ID it returns 400", func(t *testing.T) {
+		createUserReq := createRequest{
+			Id:       "invalid-id",
+			Name:     "Adri",
+			Surname:  "Nico",
+			Password: "2023Password!",
+			Email:    "adrian.nicolas@geograma.com",
+		}
+
+		body, err := json.Marshal(createUserReq)
+		require.NoError(t, err)
+
+		request, err := http.NewRequest(http.MethodPost, "/user", bytes.NewBuffer(body))
+		require.NoError(t, err)
+
+		recorder := httptest.NewRecorder()
+		r.ServeHTTP(recorder, request)
+
+		result := recorder.Result()
+		defer result.Body.Close()
+
+		assert.Equal(t, http.StatusBadRequest, result.StatusCode)
+	})
 }

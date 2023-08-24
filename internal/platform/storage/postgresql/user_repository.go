@@ -25,7 +25,7 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 func (r *UserRepository) Save(ctx context.Context, user usuario.User) error {
 	userSQLStruct := sqlbuilder.NewStruct(new(SqlUser)).For(sqlbuilder.PostgreSQL)
 	query, args := userSQLStruct.InsertInto(sqlUserTable, SqlUser{
-		ID:       user.ID(),
+		ID:       user.ID().String(),
 		Name:     user.Name(),
 		Surname:  user.Surname(),
 		Password: user.Password(),
