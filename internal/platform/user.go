@@ -4,6 +4,8 @@ import (
 	"context"
 )
 
+//go:generate mockery --case=snake --outpkg=storagemocks --output=storage/storagemocks --name=UserRepository
+
 // Domain entity (data structure that represents a user)
 type User struct {
 	// TODO: Usar tipo uuid para robustecer validaciones
