@@ -8,12 +8,14 @@ import (
 )
 
 type createRequest struct {
+	// TODO: Usar tipo uuid para robustecer validaciones
 	// binding property (validation) offered by Gin
 	Uuid     string/*uuid.UUID*/ `json:"uuid" binding:"required"`
 	Name     string `json:"name" binding:"required"`
 	Surname  string `json:"surname" binding:"required"`
 	Password string `json:"password" binding:"required"`
 	Email    string `json:"email" binding:"required"`
+	// TODO: Investigar relaciones entre entidades (1:1, 1:n, m:n)
 	//roleId: RoleEnum;
 }
 

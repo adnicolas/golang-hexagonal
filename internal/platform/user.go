@@ -6,6 +6,7 @@ import (
 
 // Domain entity (data structure that represents a user)
 type User struct {
+	// TODO: Usar tipo uuid para robustecer validaciones
 	uuid     string //uuid.UUID
 	name     string
 	surname  string
