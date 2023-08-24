@@ -21,6 +21,7 @@ type UserId struct {
 
 // NewUserId instantiate the value object for UserId
 func NewUserId(value string) (UserId, error) {
+	// Reason for using value object strategy, this check to see if it is getting a valid uuid
 	v, err := uuid.Parse(value)
 	if err != nil {
 		return UserId{}, fmt.Errorf("%w: %s", ErrInvalidUserId, value)
