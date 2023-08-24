@@ -1,18 +1,24 @@
-package mooc
+package usuario
 
-import "github.com/google/uuid"
+import (
+	"context"
+)
 
 // Domain entity (data structure that represents a user)
 type User struct {
-	uuid     uuid.UUID
-	email    string
-	password string
+	uuid     string //uuid.UUID
 	name     string
 	surname  string
+	password string
+	email    string
+}
+
+type UserRepository interface {
+	Save(ctx context.Context, user User) error
 }
 
 // NewUser creates a new user
-func NewUser(uuid uuid.UUID, name string, surname string, email string, password string) User {
+func NewUser(uuid string /*uuid.UUID*/, name string, surname string, password string, email string) User {
 	return User{
 		uuid:     uuid,
 		name:     name,
@@ -22,8 +28,8 @@ func NewUser(uuid uuid.UUID, name string, surname string, email string, password
 	}
 }
 
-// ID return the user unique identifier
-func (u User) ID() uuid.UUID {
+// ID return the user UUID
+func (u User) ID() string /*uuid.UUID*/ {
 	return u.uuid
 }
 
@@ -37,4 +43,8 @@ func (u User) Surname() string {
 
 func (u User) Email() string {
 	return u.email
+}
+
+func (u User) Password() string {
+	return u.password
 }

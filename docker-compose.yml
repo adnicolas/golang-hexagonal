@@ -1,0 +1,9 @@
+services:
+  metadata-db:
+    build: ./docker/metadata-db
+    ports:
+      - 5433:5432
+    environment:
+      - POSTGRES_DB=metadata
+      - POSTGRES_PASSWORD=dockerized_metadata
+    restart: on-failure
