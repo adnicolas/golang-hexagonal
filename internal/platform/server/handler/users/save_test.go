@@ -16,7 +16,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestController_Create(t *testing.T) {
+func TestController_Save(t *testing.T) {
 	userRepository := new(storagemocks.UserRepository)
 	userRepository.On("Save", mock.Anything, mock.AnythingOfType("usuario.User")).Return(nil)
 
