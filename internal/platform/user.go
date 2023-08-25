@@ -45,7 +45,8 @@ type UserRepository interface {
 
 // Domain entity (data structure that represents a user)
 type User struct {
-	Id       UserId
+	Id UserId
+	// TODO: Pass everything to value objects?
 	Name     string
 	Surname  string
 	Password string
