@@ -50,17 +50,9 @@ func (r *UserRepository) FindAll(ctx context.Context) ([]usuario.GetUsersDto, er
 	var users []usuario.GetUsersDto
 	for rows.Next() {
 		var item usuario.GetUsersDto
-		//var idStr string // Temporary variable to hold the ID value as a string
-
 		if err := rows.Scan(&item.Id, &item.Name, &item.Surname, &item.Email); err != nil {
 			return users, err
 		}
-		// Convert the scanned ID string to a UserId using NewUserId
-		/*id, err := usuario.NewUserId(idStr)
-		if err != nil {
-			return nil, fmt.Errorf("error trying to create new user ID: %v", err)
-		}
-		item.Id = id.String()*/
 		users = append(users, item)
 	}
 	if err = rows.Err(); err != nil {
