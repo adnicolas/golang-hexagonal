@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	usuario "github.com/adnicolas/golang-hexagonal/internal/platform"
+	usuario "github.com/adnicolas/golang-hexagonal/internal"
 	"github.com/huandu/go-sqlbuilder"
 )
 

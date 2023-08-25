@@ -5,7 +5,7 @@ package storagemocks
 import (
 	context "context"
 
-	usuario "github.com/adnicolas/golang-hexagonal/internal/platform"
+	usuario "github.com/adnicolas/golang-hexagonal/internal"
 	mock "github.com/stretchr/testify/mock"
 )
 

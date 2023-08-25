@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	usuario "github.com/adnicolas/golang-hexagonal/internal/platform"
+	usuario "github.com/adnicolas/golang-hexagonal/internal"
 	"github.com/adnicolas/golang-hexagonal/internal/platform/server/handler/health"
 	"github.com/adnicolas/golang-hexagonal/internal/platform/server/handler/users"
 	"github.com/gin-gonic/gin"

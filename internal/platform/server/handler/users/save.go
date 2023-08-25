@@ -3,7 +3,7 @@ package users
 import (
 	"net/http"
 
-	usuario "github.com/adnicolas/golang-hexagonal/internal/platform"
+	usuario "github.com/adnicolas/golang-hexagonal/internal"
 	"github.com/gin-gonic/gin"
 )
 

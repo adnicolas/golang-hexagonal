@@ -41,7 +41,7 @@ type UserRepository interface {
 	FindAll(ctx context.Context) ([]GetUsersDto, error)
 }
 
-//go:generate mockery --case=snake --outpkg=storagemocks --output=storage/storagemocks --name=UserRepository
+//go:generate mockery --case=snake --outpkg=storagemocks --output=platform/storage/storagemocks --name=UserRepository
 
 // Domain entity (data structure that represents a user)
 type User struct {
