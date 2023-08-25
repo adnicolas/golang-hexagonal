@@ -54,10 +54,10 @@ type User struct {
 }
 
 type GetUsersDto struct {
-	Id      string
-	Name    string
-	Surname string
-	Email   string
+	Id      string `json:"id"`
+	Name    string `json:"name"`
+	Surname string `json:"surname"`
+	Email   string `json:"email"`
 }
 
 // NewUser creates a new user

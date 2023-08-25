@@ -44,14 +44,14 @@ func (r *UserRepository) FindAll(ctx context.Context) ([]usuario.GetUsersDto, er
 	query, args := userSQLStruct.SelectFrom(sqlUserTable).Build()
 	rows, err := r.db.QueryContext(ctx, query, args...)
 	if err != nil {
-		return nil, err
+		return []usuario.GetUsersDto{}, fmt.Errorf("error trying to query users from database: %v", err)
 	}
 	defer rows.Close()
 	var users []usuario.GetUsersDto
 	for rows.Next() {
 		var item usuario.GetUsersDto
 		if err := rows.Scan(&item.Id, &item.Name, &item.Surname, &item.Email); err != nil {
-			return users, err
+			return []usuario.GetUsersDto{}, fmt.Errorf("error trying to query users from database: %v", err)
 		}
 		users = append(users, item)
 	}
