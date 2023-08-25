@@ -75,6 +75,8 @@ func NewUser(id string, name string, surname string, password string, email stri
 	}, nil
 }
 
+// Getters. They are not specific to the language and their use in Go is rare. However, they are the only way to achieve immutable structures
+
 // ID return the user ID
 func (u User) GetID() UserId {
 	return u.Id

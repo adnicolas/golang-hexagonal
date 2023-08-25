@@ -1,3 +1,5 @@
+// Infrastructure layer tests example
+
 package users
 
 import (
