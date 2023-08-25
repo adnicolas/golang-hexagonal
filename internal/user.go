@@ -45,12 +45,12 @@ type UserRepository interface {
 
 // Domain entity (data structure that represents a user)
 type User struct {
-	Id UserId
+	id UserId
 	// TODO: Pass everything to value objects?
-	Name     string
-	Surname  string
-	Password string
-	Email    string
+	name     string
+	surname  string
+	password string
+	email    string
 }
 
 type GetUsersDto struct {
@@ -67,11 +67,11 @@ func NewUser(id string, name string, surname string, password string, email stri
 		return User{}, err
 	}
 	return User{
-		Id:       idValueObject,
-		Name:     name,
-		Surname:  surname,
-		Password: password,
-		Email:    email,
+		id:       idValueObject,
+		name:     name,
+		surname:  surname,
+		password: password,
+		email:    email,
 	}, nil
 }
 
@@ -79,21 +79,21 @@ func NewUser(id string, name string, surname string, password string, email stri
 
 // ID return the user ID
 func (u User) GetID() UserId {
-	return u.Id
+	return u.id
 }
 
 func (u User) GetName() string {
-	return u.Name
+	return u.name
 }
 
 func (u User) GetSurname() string {
-	return u.Surname
+	return u.surname
 }
 
 func (u User) GetEmail() string {
-	return u.Email
+	return u.email
 }
 
 func (u User) GetPassword() string {
-	return u.Password
+	return u.password
 }
