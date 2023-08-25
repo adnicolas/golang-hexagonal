@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type createRequest struct {
+type saveRequest struct {
 	// binding property (validation) offered by Gin
 	Id       string `json:"id" binding:"required"`
 	Name     string `json:"name" binding:"required"`
@@ -20,7 +20,7 @@ type createRequest struct {
 
 func CreateSaveController(userRepository usuario.UserRepository) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var req createRequest
+		var req saveRequest
 		// Pass it by reference (&)
 		if err := ctx.BindJSON(&req); err != nil {
 			ctx.JSON(http.StatusBadRequest, err.Error())
