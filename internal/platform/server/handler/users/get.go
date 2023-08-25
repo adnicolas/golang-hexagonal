@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func CreateGetController(userRepository usuario.UserRepository) gin.HandlerFunc {
+func CreateFindAllController(userRepository usuario.UserRepository) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		elements, err := userRepository.FindAll(ctx)
 		if err != nil {

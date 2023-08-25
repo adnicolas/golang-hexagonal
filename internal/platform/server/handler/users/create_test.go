@@ -20,7 +20,7 @@ func TestController_Create(t *testing.T) {
 
 	gin.SetMode(gin.TestMode)
 	r := gin.New()
-	r.POST("/user", CreatePostController(userRepository))
+	r.POST("/user", CreateSaveController(userRepository))
 
 	t.Run("given an invalid request it returns 400", func(t *testing.T) {
 		createUserReq := createRequest{
