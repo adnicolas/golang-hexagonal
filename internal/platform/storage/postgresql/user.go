@@ -5,9 +5,9 @@ const (
 )
 
 type SqlUser struct {
-	ID       string `db:"uuid"`
-	Name     string `db:"name"`
-	Surname  string `db:"surname"`
+	ID       string `db:"uuid" fieldtag:"select"`
+	Name     string `db:"name" fieldtag:"select"`
+	Surname  string `db:"surname" fieldtag:"select"`
 	Password string `db:"password"`
-	Email    string `db:"email"`
+	Email    string `db:"email" fieldtag:"select"`
 }

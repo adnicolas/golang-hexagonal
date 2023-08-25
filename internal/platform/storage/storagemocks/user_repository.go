@@ -14,6 +14,32 @@ type UserRepository struct {
 	mock.Mock
 }
 
+// FindAll provides a mock function with given fields: ctx
+func (_m *UserRepository) FindAll(ctx context.Context) ([]usuario.GetUsersDto, error) {
+	ret := _m.Called(ctx)
+
+	var r0 []usuario.GetUsersDto
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context) ([]usuario.GetUsersDto, error)); ok {
+		return rf(ctx)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context) []usuario.GetUsersDto); ok {
+		r0 = rf(ctx)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]usuario.GetUsersDto)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = rf(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Save provides a mock function with given fields: ctx, user
 func (_m *UserRepository) Save(ctx context.Context, user usuario.User) error {
 	ret := _m.Called(ctx, user)

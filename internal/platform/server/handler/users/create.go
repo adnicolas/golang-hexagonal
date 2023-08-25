@@ -18,7 +18,7 @@ type createRequest struct {
 	//roleId: RoleEnum;
 }
 
-func CreateController(userRepository usuario.UserRepository) gin.HandlerFunc {
+func CreatePostController(userRepository usuario.UserRepository) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var req createRequest
 		// Pass it by reference (&)

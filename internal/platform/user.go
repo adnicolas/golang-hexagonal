@@ -38,17 +38,25 @@ func (id UserId) String() string {
 
 type UserRepository interface {
 	Save(ctx context.Context, user User) error
+	FindAll(ctx context.Context) ([]GetUsersDto, error)
 }
 
 //go:generate mockery --case=snake --outpkg=storagemocks --output=storage/storagemocks --name=UserRepository
 
 // Domain entity (data structure that represents a user)
 type User struct {
-	id       UserId
-	name     string
-	surname  string
-	password string
-	email    string
+	Id       UserId
+	Name     string
+	Surname  string
+	Password string
+	Email    string
+}
+
+type GetUsersDto struct {
+	Id      string
+	Name    string
+	Surname string
+	Email   string
 }
 
 // NewUser creates a new user
@@ -58,31 +66,31 @@ func NewUser(id string, name string, surname string, password string, email stri
 		return User{}, err
 	}
 	return User{
-		id:       idValueObject,
-		name:     name,
-		surname:  surname,
-		password: password,
-		email:    email,
+		Id:       idValueObject,
+		Name:     name,
+		Surname:  surname,
+		Password: password,
+		Email:    email,
 	}, nil
 }
 
 // ID return the user ID
-func (u User) ID() UserId {
-	return u.id
+func (u User) GetID() UserId {
+	return u.Id
 }
 
-func (u User) Name() string {
-	return u.name
+func (u User) GetName() string {
+	return u.Name
 }
 
-func (u User) Surname() string {
-	return u.surname
+func (u User) GetSurname() string {
+	return u.Surname
 }
 
-func (u User) Email() string {
-	return u.email
+func (u User) GetEmail() string {
+	return u.Email
 }
 
-func (u User) Password() string {
-	return u.password
+func (u User) GetPassword() string {
+	return u.Password
 }
