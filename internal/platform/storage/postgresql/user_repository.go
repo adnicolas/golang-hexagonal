@@ -42,7 +42,7 @@ func (r *UserRepository) Save(ctx context.Context, user usuario.User) error {
 func (r *UserRepository) FindAll(ctx context.Context) ([]usuario.GetUsersDto, error) {
 	userSQLStruct := sqlbuilder.NewStruct(new(SqlUser)).WithTag("select").For(sqlbuilder.PostgreSQL)
 	query, args := userSQLStruct.SelectFrom(sqlUserTable).Build()
-	rows, err := r.db.Query(query, args...)
+	rows, err := r.db.QueryContext(ctx, query, args...)
 	if err != nil {
 		return nil, err
 	}
