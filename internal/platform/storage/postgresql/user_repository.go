@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"log"
 
 	usuario "github.com/adnicolas/golang-hexagonal/internal"
 	"github.com/huandu/go-sqlbuilder"
@@ -31,6 +32,8 @@ func (r *UserRepository) Save(ctx context.Context, user usuario.User) error {
 		Password: user.GetPassword(),
 		Email:    user.GetEmail(),
 	}).Build()
+	log.Println(query)
+	log.Println(args)
 	_, err := r.db.ExecContext(ctx, query, args...)
 	if err != nil {
 		return fmt.Errorf("error trying to persist user on database: %v", err)
