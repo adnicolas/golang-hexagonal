@@ -4,7 +4,7 @@ const (
 	sqlUserTable = "public.user"
 )
 
-type SqlUser struct {
+type sqlUser struct {
 	ID       string `db:"uuid" fieldtag:"select"`
 	Name     string `db:"name" fieldtag:"select"`
 	Surname  string `db:"surname" fieldtag:"select"`

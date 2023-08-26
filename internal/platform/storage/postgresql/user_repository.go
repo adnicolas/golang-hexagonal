@@ -23,8 +23,8 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 
 // Save implements the usuario.UserRepository interface
 func (r *UserRepository) Save(ctx context.Context, user usuario.User) error {
-	userSQLStruct := sqlbuilder.NewStruct(new(SqlUser)).For(sqlbuilder.PostgreSQL)
-	query, args := userSQLStruct.InsertInto(sqlUserTable, SqlUser{
+	userSQLStruct := sqlbuilder.NewStruct(new(sqlUser)).For(sqlbuilder.PostgreSQL)
+	query, args := userSQLStruct.InsertInto(sqlUserTable, sqlUser{
 		ID:       user.GetID().String(),
 		Name:     user.GetName(),
 		Surname:  user.GetSurname(),
@@ -40,7 +40,7 @@ func (r *UserRepository) Save(ctx context.Context, user usuario.User) error {
 }
 
 func (r *UserRepository) FindAll(ctx context.Context) ([]usuario.GetUsersDto, error) {
-	userSQLStruct := sqlbuilder.NewStruct(new(SqlUser)).WithTag("select").For(sqlbuilder.PostgreSQL)
+	userSQLStruct := sqlbuilder.NewStruct(new(sqlUser)).WithTag("select").For(sqlbuilder.PostgreSQL)
 	query, args := userSQLStruct.SelectFrom(sqlUserTable).Build()
 	rows, err := r.db.QueryContext(ctx, query, args...)
 	if err != nil {
