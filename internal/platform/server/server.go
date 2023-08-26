@@ -31,6 +31,13 @@ func New(ctx context.Context, host string, port uint, shutdownTimeout time.Durat
 		shutdownTimeout: shutdownTimeout,
 		bus:             myBus,
 	}
+
+	// Global logger middleware
+	srv.engine.Use(gin.Logger())
+
+	// Global recovery middleware recovers the service from any panics and logs a 500 error if one exists
+	srv.engine.Use(gin.Recovery())
+
 	srv.registerRoutes()
 	return serverContext(ctx), srv
 }
