@@ -9,8 +9,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/adnicolas/golang-hexagonal/internal/creating"
-	"github.com/adnicolas/golang-hexagonal/internal/platform/storage/storagemocks"
+	"github.com/adnicolas/golang-hexagonal/kit/command/commandmocks"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -18,14 +17,21 @@ import (
 )
 
 func TestController_Create(t *testing.T) {
-	userRepository := new(storagemocks.UserRepository)
-	userRepository.On("Save", mock.Anything, mock.AnythingOfType("usuario.User")).Return(nil)
+	//userRepository := new(storagemocks.UserRepository)
+	//userRepository.On("Save", mock.Anything, mock.AnythingOfType("usuario.User")).Return(nil)
 
-	creatingUserService := creating.NewUserService(userRepository)
+	//creatingUserService := creating.NewUserService(userRepository)
+
+	commandBus := new(commandmocks.Bus)
+	commandBus.On(
+		"Dispatch",
+		mock.Anything,
+		mock.AnythingOfType("creating.UserCommand"),
+	).Return(nil)
 
 	gin.SetMode(gin.TestMode)
 	r := gin.New()
-	r.POST("/user", CreateController(creatingUserService))
+	r.POST("/user", CreateController(commandBus))
 
 	t.Run("given an invalid request it returns 400", func(t *testing.T) {
 		saveUserReq := saveRequest{
@@ -70,7 +76,6 @@ func TestController_Create(t *testing.T) {
 		result := recorder.Result()
 		defer result.Body.Close()
 
-		mock.AssertExpectationsForObjects(t, userRepository)
 		assert.Equal(t, http.StatusCreated, result.StatusCode)
 	})
 
