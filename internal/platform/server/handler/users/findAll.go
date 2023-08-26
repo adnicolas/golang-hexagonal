@@ -3,13 +3,13 @@ package users
 import (
 	"net/http"
 
-	usuario "github.com/adnicolas/golang-hexagonal/internal"
+	"github.com/adnicolas/golang-hexagonal/internal/fetching"
 	"github.com/gin-gonic/gin"
 )
 
-func FindAllController(userRepository usuario.UserRepository) gin.HandlerFunc {
+func FindAllController(fetchingUserService fetching.UserService) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		elements, err := userRepository.FindAll(ctx)
+		elements, err := fetchingUserService.FindAllUsers(ctx)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, err.Error())
 			return

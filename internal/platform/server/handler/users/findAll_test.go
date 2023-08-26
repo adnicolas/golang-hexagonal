@@ -9,6 +9,7 @@ import (
 
 	usuario "github.com/adnicolas/golang-hexagonal/internal"
 
+	"github.com/adnicolas/golang-hexagonal/internal/fetching"
 	"github.com/adnicolas/golang-hexagonal/internal/platform/storage/storagemocks"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -25,9 +26,11 @@ func TestController_FindAll(t *testing.T) {
 		userRepository := new(storagemocks.UserRepository)
 		userRepository.On("FindAll", mock.Anything).Return([]usuario.GetUsersDto{}, nil)
 
+		fetchingUserService := fetching.NewUserService(userRepository)
+
 		gin.SetMode(gin.TestMode)
 		r := gin.New()
-		r.GET("/users", FindAllController(userRepository))
+		r.GET("/users", FindAllController(fetchingUserService))
 
 		req, err := http.NewRequest(http.MethodGet, "/users", nil)
 		require.NoError(t, err)
@@ -57,7 +60,10 @@ func TestController_FindAll(t *testing.T) {
 
 		userRepository := new(storagemocks.UserRepository)
 		userRepository.On("FindAll", mock.Anything).Return(responseUsers, nil)
-		r.GET("/users", FindAllController(userRepository))
+
+		fetchingUserService := fetching.NewUserService(userRepository)
+
+		r.GET("/users", FindAllController(fetchingUserService))
 
 		req, err := http.NewRequest(http.MethodGet, "/users", nil)
 		require.NoError(t, err)
