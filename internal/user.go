@@ -36,6 +36,7 @@ func (id UserId) String() string {
 	return id.value
 }
 
+// Domain repository interface
 type UserRepository interface {
 	Save(ctx context.Context, user User) error
 	FindAll(ctx context.Context) ([]GetUsersDto, error)
