@@ -34,15 +34,14 @@ func Run() error {
 	fetchingUserService := fetching.NewUserService(userRepository)
 
 	var (
-		commandBus = inmemory.NewCommandBus()
-		queryBus   = inmemory.NewQueryBus()
+		bus = inmemory.NewBus()
 	)
 	createUserCommandHandler := creating.NewUserCommandHandler(creatingUserService)
-	commandBus.Register(creating.UserCommandType, createUserCommandHandler)
+	bus.RegisterCommand(creating.UserCommandType, createUserCommandHandler)
 	findUsersQueryHandler := fetching.NewUserQueryHandler(fetchingUserService)
-	queryBus.Register(fetching.UserQueryType, findUsersQueryHandler)
+	bus.RegisterQuery(fetching.UserQueryType, findUsersQueryHandler)
 
 	// Server initialization
-	srv := server.New(host, port, commandBus, queryBus)
+	srv := server.New(host, port, bus)
 	return srv.Run()
 }

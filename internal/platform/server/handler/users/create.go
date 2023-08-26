@@ -6,7 +6,7 @@ import (
 
 	usuario "github.com/adnicolas/golang-hexagonal/internal"
 	"github.com/adnicolas/golang-hexagonal/internal/creating"
-	"github.com/adnicolas/golang-hexagonal/kit/command"
+	"github.com/adnicolas/golang-hexagonal/kit/bus"
 	"github.com/gin-gonic/gin"
 )
 
@@ -21,7 +21,7 @@ type saveRequest struct {
 	//roleId: RoleEnum;
 }
 
-func CreateController(commandBus command.Bus) gin.HandlerFunc {
+func CreateController(myBus bus.Bus) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var req saveRequest
 		// Pass it by reference (&)
@@ -30,7 +30,7 @@ func CreateController(commandBus command.Bus) gin.HandlerFunc {
 			return
 		}
 
-		err := commandBus.Dispatch(ctx, creating.NewUserCommand(
+		err := myBus.DispatchCommand(ctx, creating.NewUserCommand(
 			req.Id,
 			req.Name,
 			req.Surname,

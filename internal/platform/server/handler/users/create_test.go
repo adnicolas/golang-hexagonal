@@ -9,7 +9,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/adnicolas/golang-hexagonal/kit/command/commandmocks"
+	"github.com/adnicolas/golang-hexagonal/kit/bus/busmocks"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -17,9 +17,9 @@ import (
 )
 
 func TestController_Create(t *testing.T) {
-	commandBus := new(commandmocks.Bus)
+	commandBus := new(busmocks.Bus)
 	commandBus.On(
-		"Dispatch",
+		"DispatchCommand",
 		mock.Anything,
 		mock.AnythingOfType("creating.UserCommand"),
 	).Return(nil)

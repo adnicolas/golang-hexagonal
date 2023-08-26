@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	usuario "github.com/adnicolas/golang-hexagonal/internal"
-	"github.com/adnicolas/golang-hexagonal/kit/query/querymocks"
+	"github.com/adnicolas/golang-hexagonal/kit/bus/busmocks"
 
 	"github.com/adnicolas/golang-hexagonal/internal/platform/storage/storagemocks"
 	"github.com/gin-gonic/gin"
@@ -18,14 +18,14 @@ import (
 )
 
 func TestController_FindAll(t *testing.T) {
-	queryBus := new(querymocks.Bus)
+	queryBus := new(busmocks.Bus)
 
 	gin.SetMode(gin.TestMode)
 	r := gin.New()
 
 	t.Run("it returns an empty array of usuario.GetUsersDto when there are no users", func(t *testing.T) {
 		queryBus.On(
-			"Dispatch",
+			"DispatchQuery",
 			mock.Anything,
 			mock.AnythingOfType("fetching.UserQuery"),
 		).Return([]usuario.GetUsersDto{}, nil)
@@ -60,7 +60,7 @@ func TestController_FindAll(t *testing.T) {
 		var responseUsers = convertToGetUsersDto(users)
 
 		queryBus.On(
-			"Dispatch",
+			"DispatchQuery",
 			mock.Anything,
 			mock.AnythingOfType("fetching.UserQuery"),
 		).Return(responseUsers, nil)

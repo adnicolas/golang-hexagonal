@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 
-	"github.com/adnicolas/golang-hexagonal/kit/command"
+	"github.com/adnicolas/golang-hexagonal/kit/bus"
 )
 
-const UserCommandType command.Type = "command.creating.user"
+const UserCommandType bus.Type = "command.creating.user"
 
 // UserCommand is the command dispatched to create a new user
 type UserCommand struct {
@@ -28,7 +28,7 @@ func NewUserCommand(id, name, surname, password, email string) UserCommand {
 	}
 }
 
-func (c UserCommand) Type() command.Type {
+func (c UserCommand) Type() bus.Type {
 	return UserCommandType
 }
 
@@ -43,8 +43,8 @@ func NewUserCommandHandler(service UserService) UserCommandHandler {
 	}
 }
 
-// Handle implements the command.Handler interface
-func (handler UserCommandHandler) Handle(ctx context.Context, cmd command.Command) error {
+// Handle implements the bus.CommandHandler interface
+func (handler UserCommandHandler) Handle(ctx context.Context, cmd bus.Command) error {
 	// Casting of the generic to the user command
 	createUserCmd, ok := cmd.(UserCommand)
 	if !ok {
