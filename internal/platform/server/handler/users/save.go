@@ -1,9 +1,11 @@
 package users
 
 import (
+	"errors"
 	"net/http"
 
 	usuario "github.com/adnicolas/golang-hexagonal/internal"
+	"github.com/adnicolas/golang-hexagonal/internal/creating"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,7 +20,7 @@ type saveRequest struct {
 	//roleId: RoleEnum;
 }
 
-func CreateSaveController(userRepository usuario.UserRepository) gin.HandlerFunc {
+func CreateController(creatingUserService creating.UserService) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var req saveRequest
 		// Pass it by reference (&)
@@ -26,17 +28,17 @@ func CreateSaveController(userRepository usuario.UserRepository) gin.HandlerFunc
 			ctx.JSON(http.StatusBadRequest, err.Error())
 			return
 		}
-		user, err := usuario.NewUser(req.Id, req.Name, req.Surname, req.Password, req.Email)
+		err := creatingUserService.CreateUser(ctx, req.Id, req.Name, req.Surname, req.Password, req.Email)
+
 		if err != nil {
-			/*if errors.Is(err, usuario.ErrInvalidUserId) {
-				log.Println(err.Error())
-			}*/
-			ctx.JSON(http.StatusBadRequest, err.Error())
-			return
-		}
-		if err := userRepository.Save(ctx, user); err != nil {
-			ctx.JSON(http.StatusInternalServerError, err.Error())
-			return
+			switch {
+			case errors.Is(err, usuario.ErrInvalidUserId):
+				ctx.JSON(http.StatusBadRequest, err.Error())
+				return
+			default:
+				ctx.JSON(http.StatusInternalServerError, err.Error())
+				return
+			}
 		}
 		ctx.Status(http.StatusCreated)
 	}

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
+	"github.com/adnicolas/golang-hexagonal/internal/creating"
 	"github.com/adnicolas/golang-hexagonal/internal/platform/server"
 	pg "github.com/adnicolas/golang-hexagonal/internal/platform/storage/postgresql"
 	_ "github.com/lib/pq"
@@ -26,7 +27,8 @@ func Run() error {
 		return err
 	}
 	userRepository := pg.NewUserRepository(db)
+	creatingCourseService := creating.NewUserService(userRepository)
 	// Server initialization
-	srv := server.New(host, port, userRepository)
+	srv := server.New(host, port, userRepository, creatingCourseService)
 	return srv.Run()
 }

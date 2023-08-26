@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"log"
 
 	usuario "github.com/adnicolas/golang-hexagonal/internal"
 	"github.com/huandu/go-sqlbuilder"
@@ -43,8 +42,6 @@ func (r *UserRepository) Save(ctx context.Context, user usuario.User) error {
 func (r *UserRepository) FindAll(ctx context.Context) ([]usuario.GetUsersDto, error) {
 	userSQLStruct := sqlbuilder.NewStruct(new(sqlUser)).WithTag("select").For(sqlbuilder.PostgreSQL)
 	query, args := userSQLStruct.SelectFrom(sqlUserTable).Build()
-	log.Println(query)
-	log.Println(args)
 	rows, err := r.db.QueryContext(ctx, query, args...)
 	if err != nil {
 		return []usuario.GetUsersDto{}, fmt.Errorf("error trying to query users from database: %v", err)

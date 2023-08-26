@@ -16,13 +16,13 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestController_Save(t *testing.T) {
+func TestController_Create(t *testing.T) {
 	userRepository := new(storagemocks.UserRepository)
 	userRepository.On("Save", mock.Anything, mock.AnythingOfType("usuario.User")).Return(nil)
 
 	gin.SetMode(gin.TestMode)
 	r := gin.New()
-	r.POST("/user", CreateSaveController(userRepository))
+	r.POST("/user", CreateController(userRepository))
 
 	t.Run("given an invalid request it returns 400", func(t *testing.T) {
 		saveUserReq := saveRequest{

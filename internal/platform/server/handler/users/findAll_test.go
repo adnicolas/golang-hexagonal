@@ -27,7 +27,7 @@ func TestController_FindAll(t *testing.T) {
 
 		gin.SetMode(gin.TestMode)
 		r := gin.New()
-		r.GET("/users", CreateFindAllController(userRepository))
+		r.GET("/users", FindAllController(userRepository))
 
 		req, err := http.NewRequest(http.MethodGet, "/users", nil)
 		require.NoError(t, err)
@@ -57,7 +57,7 @@ func TestController_FindAll(t *testing.T) {
 
 		userRepository := new(storagemocks.UserRepository)
 		userRepository.On("FindAll", mock.Anything).Return(responseUsers, nil)
-		r.GET("/users", CreateFindAllController(userRepository))
+		r.GET("/users", FindAllController(userRepository))
 
 		req, err := http.NewRequest(http.MethodGet, "/users", nil)
 		require.NoError(t, err)
