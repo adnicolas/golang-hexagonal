@@ -1,8 +1,10 @@
 package bootstrap
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
+	"time"
 
 	"github.com/adnicolas/golang-hexagonal/internal/creating"
 	"github.com/adnicolas/golang-hexagonal/internal/fetching"
@@ -13,13 +15,16 @@ import (
 )
 
 const (
-	host       = "localhost"
-	port       = 8081
+	host            = "localhost"
+	port            = 8081
+	shutdownTimeout = 10 * time.Second
+
 	dbUser     = "postgres"
 	dbPassword = "dockerized_metadata"
 	dbHost     = "localhost"
 	dbPort     = 5433
 	dbName     = "metadata"
+	dbTimeout  = 5 * time.Second
 )
 
 func Run() error {
@@ -29,7 +34,7 @@ func Run() error {
 		return err
 	}
 
-	userRepository := pg.NewUserRepository(db)
+	userRepository := pg.NewUserRepository(db, dbTimeout)
 	creatingUserService := creating.NewUserService(userRepository)
 	fetchingUserService := fetching.NewUserService(userRepository)
 
@@ -41,7 +46,8 @@ func Run() error {
 	findUsersQueryHandler := fetching.NewUserQueryHandler(fetchingUserService)
 	bus.RegisterQuery(fetching.UserQueryType, findUsersQueryHandler)
 
-	// Server initialization
-	srv := server.New(host, port, bus)
-	return srv.Run()
+	// Server initialization with empty context
+	ctx, srv := server.New(context.Background(), host, port, shutdownTimeout, bus)
+
+	return srv.Run(ctx)
 }

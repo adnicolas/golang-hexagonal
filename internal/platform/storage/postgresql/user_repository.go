@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"time"
 
 	usuario "github.com/adnicolas/golang-hexagonal/internal"
 	"github.com/huandu/go-sqlbuilder"
@@ -11,13 +12,15 @@ import (
 
 // UserRepository is a PostgreSQL usuario.UserRepository implementation
 type UserRepository struct {
-	db *sql.DB
+	db        *sql.DB
+	dbTimeout time.Duration
 }
 
 // NewUserRepository initializes a PostgreSQL-based implementation of usuario.UserRepository
-func NewUserRepository(db *sql.DB) *UserRepository {
+func NewUserRepository(db *sql.DB, dbTimeout time.Duration) *UserRepository {
 	return &UserRepository{
-		db: db,
+		db:        db,
+		dbTimeout: dbTimeout,
 	}
 }
 
@@ -31,7 +34,14 @@ func (r *UserRepository) Save(ctx context.Context, user usuario.User) error {
 		Password: user.GetPassword(),
 		Email:    user.GetEmail(),
 	}).Build()
-	_, err := r.db.ExecContext(ctx, query, args...)
+
+	// Context pattern example
+	// A timeout is added for when trying to persist a user in the DB
+	// It's necessary to pass the parent context to the new context
+	ctxTimeout, cancel := context.WithTimeout(ctx, r.dbTimeout)
+	defer cancel()
+
+	_, err := r.db.ExecContext(ctxTimeout, query, args...)
 	if err != nil {
 		return fmt.Errorf("error trying to persist user on database: %v", err)
 	}
@@ -42,7 +52,14 @@ func (r *UserRepository) Save(ctx context.Context, user usuario.User) error {
 func (r *UserRepository) FindAll(ctx context.Context) ([]usuario.GetUsersDto, error) {
 	userSQLStruct := sqlbuilder.NewStruct(new(sqlUser)).WithTag("select").For(sqlbuilder.PostgreSQL)
 	query, args := userSQLStruct.SelectFrom(sqlUserTable).Build()
-	rows, err := r.db.QueryContext(ctx, query, args...)
+
+	// Context pattern example
+	// A timeout is added for when trying to fetch users from DB
+	// It's necessary to pass the parent context to the new context
+	ctxTimeout, cancel := context.WithTimeout(ctx, r.dbTimeout)
+	defer cancel()
+
+	rows, err := r.db.QueryContext(ctxTimeout, query, args...)
 	if err != nil {
 		return []usuario.GetUsersDto{}, fmt.Errorf("error trying to query users from database: %v", err)
 	}
