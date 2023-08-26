@@ -9,6 +9,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/adnicolas/golang-hexagonal/internal/creating"
 	"github.com/adnicolas/golang-hexagonal/internal/platform/storage/storagemocks"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -20,9 +21,11 @@ func TestController_Create(t *testing.T) {
 	userRepository := new(storagemocks.UserRepository)
 	userRepository.On("Save", mock.Anything, mock.AnythingOfType("usuario.User")).Return(nil)
 
+	creatingUserService := creating.NewUserService(userRepository)
+
 	gin.SetMode(gin.TestMode)
 	r := gin.New()
-	r.POST("/user", CreateController(userRepository))
+	r.POST("/user", CreateController(creatingUserService))
 
 	t.Run("given an invalid request it returns 400", func(t *testing.T) {
 		saveUserReq := saveRequest{
