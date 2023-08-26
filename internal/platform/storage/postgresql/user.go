@@ -4,6 +4,7 @@ const (
 	sqlUserTable = "public.user"
 )
 
+// DTO that facilitates the mapping with the DB
 type sqlUser struct {
 	ID       string `db:"uuid" fieldtag:"select"`
 	Name     string `db:"name" fieldtag:"select"`
