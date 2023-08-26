@@ -41,7 +41,6 @@ func Test_UserRepository_Save_Succeed(t *testing.T) {
 	user, err := usuario.NewUser(userId, userName, userSurname, userPassword, userEmail)
 	require.NoError(t, err)
 
-	// sqlmock library allows to mock the DB connection
 	db, sqlMock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
 	require.NoError(t, err)
 
@@ -53,6 +52,41 @@ func Test_UserRepository_Save_Succeed(t *testing.T) {
 	repo := NewUserRepository(db)
 
 	err = repo.Save(context.Background(), user)
+
+	assert.NoError(t, sqlMock.ExpectationsWereMet())
+	assert.NoError(t, err)
+}
+
+func Test_UserRepository_FindAll_RepositoryError(t *testing.T) {
+	db, sqlMock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
+	require.NoError(t, err)
+
+	sqlMock.ExpectQuery(
+		"SELECT public.user.uuid, public.user.name, public.user.surname, public.user.email FROM public.user").
+		WillReturnError(errors.New("something failed with user repository"))
+
+	repo := NewUserRepository(db)
+
+	_, err = repo.FindAll(context.Background())
+
+	assert.NoError(t, sqlMock.ExpectationsWereMet())
+	assert.Error(t, err)
+}
+
+func Test_UserRepository_FindAll_Succeed(t *testing.T) {
+	db, sqlMock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
+	require.NoError(t, err)
+
+	rows := sqlmock.NewRows([]string{"uuid", "name", "surname", "email"}).
+		AddRow("c226f125-7c63-4db6-ac47-aaf28baebeb5", "Adri", "Nico", "adri@gmail.com")
+
+	sqlMock.ExpectQuery(
+		"SELECT public.user.uuid, public.user.name, public.user.surname, public.user.email FROM public.user").
+		WillReturnRows(rows)
+
+	repo := NewUserRepository(db)
+
+	_, err = repo.FindAll(context.Background())
 
 	assert.NoError(t, sqlMock.ExpectationsWereMet())
 	assert.NoError(t, err)

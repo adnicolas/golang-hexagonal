@@ -32,8 +32,6 @@ func (r *UserRepository) Save(ctx context.Context, user usuario.User) error {
 		Password: user.GetPassword(),
 		Email:    user.GetEmail(),
 	}).Build()
-	log.Println(query)
-	log.Println(args)
 	_, err := r.db.ExecContext(ctx, query, args...)
 	if err != nil {
 		return fmt.Errorf("error trying to persist user on database: %v", err)
@@ -45,6 +43,8 @@ func (r *UserRepository) Save(ctx context.Context, user usuario.User) error {
 func (r *UserRepository) FindAll(ctx context.Context) ([]usuario.GetUsersDto, error) {
 	userSQLStruct := sqlbuilder.NewStruct(new(sqlUser)).WithTag("select").For(sqlbuilder.PostgreSQL)
 	query, args := userSQLStruct.SelectFrom(sqlUserTable).Build()
+	log.Println(query)
+	log.Println(args)
 	rows, err := r.db.QueryContext(ctx, query, args...)
 	if err != nil {
 		return []usuario.GetUsersDto{}, fmt.Errorf("error trying to query users from database: %v", err)
