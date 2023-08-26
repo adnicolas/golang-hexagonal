@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	usuario "github.com/adnicolas/golang-hexagonal/internal"
@@ -27,7 +28,7 @@ func Test_UserRepository_Save_RepositoryError(t *testing.T) {
 		WithArgs(userId, userName, userSurname, userPassword, userEmail).
 		WillReturnError(errors.New("something failed with user repository"))
 
-	repo := NewUserRepository(db)
+	repo := NewUserRepository(db, 5*time.Second)
 
 	err = repo.Save(context.Background(), user)
 
@@ -49,7 +50,7 @@ func Test_UserRepository_Save_Succeed(t *testing.T) {
 		WithArgs(userId, userName, userSurname, userPassword, userEmail).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 
-	repo := NewUserRepository(db)
+	repo := NewUserRepository(db, 5*time.Second)
 
 	err = repo.Save(context.Background(), user)
 
@@ -65,7 +66,7 @@ func Test_UserRepository_FindAll_RepositoryError(t *testing.T) {
 		"SELECT public.user.uuid, public.user.name, public.user.surname, public.user.email FROM public.user").
 		WillReturnError(errors.New("something failed with user repository"))
 
-	repo := NewUserRepository(db)
+	repo := NewUserRepository(db, 5*time.Second)
 
 	_, err = repo.FindAll(context.Background())
 
@@ -84,7 +85,7 @@ func Test_UserRepository_FindAll_Succeed(t *testing.T) {
 		"SELECT public.user.uuid, public.user.name, public.user.surname, public.user.email FROM public.user").
 		WillReturnRows(rows)
 
-	repo := NewUserRepository(db)
+	repo := NewUserRepository(db, 5*time.Second)
 
 	_, err = repo.FindAll(context.Background())
 

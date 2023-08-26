@@ -11,3 +11,11 @@ The platform folder is equivalent to the infrastructure layer.
 ## Go folder structure
 
 **kit** folder is what in other languages is known as **shared** folder
+
+## "Production ready" goals
+
+* Acceptable performance
+* Support for concurrency
+* Support for asynchrony
+* Robust error handling
+* Observability (metrics, log)
