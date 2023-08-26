@@ -8,8 +8,8 @@ import (
 	"testing"
 
 	usuario "github.com/adnicolas/golang-hexagonal/internal"
+	"github.com/adnicolas/golang-hexagonal/kit/query/querymocks"
 
-	"github.com/adnicolas/golang-hexagonal/internal/fetching"
 	"github.com/adnicolas/golang-hexagonal/internal/platform/storage/storagemocks"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -18,19 +18,21 @@ import (
 )
 
 func TestController_FindAll(t *testing.T) {
+	queryBus := new(querymocks.Bus)
 
 	gin.SetMode(gin.TestMode)
 	r := gin.New()
 
 	t.Run("it returns an empty array of usuario.GetUsersDto when there are no users", func(t *testing.T) {
+		queryBus.On(
+			"Dispatch",
+			mock.Anything,
+			mock.AnythingOfType("fetching.UserQuery"),
+		).Return([]usuario.GetUsersDto{}, nil)
+		r.GET("/users", FindAllController(queryBus))
+
 		userRepository := new(storagemocks.UserRepository)
 		userRepository.On("FindAll", mock.Anything).Return([]usuario.GetUsersDto{}, nil)
-
-		fetchingUserService := fetching.NewUserService(userRepository)
-
-		gin.SetMode(gin.TestMode)
-		r := gin.New()
-		r.GET("/users", FindAllController(fetchingUserService))
 
 		req, err := http.NewRequest(http.MethodGet, "/users", nil)
 		require.NoError(t, err)
@@ -52,18 +54,20 @@ func TestController_FindAll(t *testing.T) {
 	})
 
 	t.Run("it returns an array of usuario.GetUsersDto when there are users", func(t *testing.T) {
-
 		user, _ := usuario.NewUser("8a1c5cdc-ba57-445a-994d-aa412d23723f", "Adri", "Nico", "randomPassword", "adrian@gmail.com")
 		var users = []usuario.User{user}
 
 		var responseUsers = convertToGetUsersDto(users)
 
+		queryBus.On(
+			"Dispatch",
+			mock.Anything,
+			mock.AnythingOfType("fetching.UserQuery"),
+		).Return(responseUsers, nil)
+		r.GET("/users", FindAllController(queryBus))
+
 		userRepository := new(storagemocks.UserRepository)
 		userRepository.On("FindAll", mock.Anything).Return(responseUsers, nil)
-
-		fetchingUserService := fetching.NewUserService(userRepository)
-
-		r.GET("/users", FindAllController(fetchingUserService))
 
 		req, err := http.NewRequest(http.MethodGet, "/users", nil)
 		require.NoError(t, err)

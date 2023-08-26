@@ -17,11 +17,6 @@ import (
 )
 
 func TestController_Create(t *testing.T) {
-	//userRepository := new(storagemocks.UserRepository)
-	//userRepository.On("Save", mock.Anything, mock.AnythingOfType("usuario.User")).Return(nil)
-
-	//creatingUserService := creating.NewUserService(userRepository)
-
 	commandBus := new(commandmocks.Bus)
 	commandBus.On(
 		"Dispatch",

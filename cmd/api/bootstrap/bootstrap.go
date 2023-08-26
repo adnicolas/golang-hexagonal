@@ -31,15 +31,18 @@ func Run() error {
 
 	userRepository := pg.NewUserRepository(db)
 	creatingUserService := creating.NewUserService(userRepository)
+	fetchingUserService := fetching.NewUserService(userRepository)
 
 	var (
 		commandBus = inmemory.NewCommandBus()
+		queryBus   = inmemory.NewQueryBus()
 	)
 	createUserCommandHandler := creating.NewUserCommandHandler(creatingUserService)
 	commandBus.Register(creating.UserCommandType, createUserCommandHandler)
+	findUsersQueryHandler := fetching.NewUserQueryHandler(fetchingUserService)
+	queryBus.Register(fetching.UserQueryType, findUsersQueryHandler)
 
-	fetchingUserService := fetching.NewUserService(userRepository)
 	// Server initialization
-	srv := server.New(host, port, fetchingUserService, creatingUserService, commandBus)
+	srv := server.New(host, port, commandBus, queryBus)
 	return srv.Run()
 }
