@@ -5,6 +5,7 @@ const (
 )
 
 // DTO that facilitates the mapping with the DB
+// Data mapper pattern
 type sqlUser struct {
 	ID       string `db:"uuid" fieldtag:"select"`
 	Name     string `db:"name" fieldtag:"select"`
