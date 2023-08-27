@@ -9,9 +9,10 @@ import (
 
 	usuario "github.com/adnicolas/golang-hexagonal/internal"
 	"github.com/adnicolas/golang-hexagonal/internal/platform/storage/storagemocks"
+	"github.com/adnicolas/golang-hexagonal/kit/event"
+	"github.com/adnicolas/golang-hexagonal/kit/event/eventmocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/stretchr/testify/require"
 )
 
 func Test_UserService_CreateUser_RepositoryError(t *testing.T) {
@@ -21,17 +22,39 @@ func Test_UserService_CreateUser_RepositoryError(t *testing.T) {
 	userPass := "myPass"
 	userEmail := "adri@gmail.com"
 
-	user, err := usuario.NewUser(userId, userName, userSurname, userPass, userEmail)
-	require.NoError(t, err)
-
 	userRepositoryMock := new(storagemocks.UserRepository)
-	userRepositoryMock.On("Save", mock.Anything, user).Return(errors.New("something unexpected happened"))
+	userRepositoryMock.On("Save", mock.Anything, mock.AnythingOfType("usuario.User")).Return(errors.New("something unexpected happened"))
 
-	userService := NewUserService(userRepositoryMock)
+	eventBusMock := new(eventmocks.Bus)
 
-	err = userService.CreateUser(context.Background(), userId, userName, userSurname, userPass, userEmail)
+	userService := NewUserService(userRepositoryMock, eventBusMock)
+
+	err := userService.CreateUser(context.Background(), userId, userName, userSurname, userPass, userEmail)
 
 	userRepositoryMock.AssertExpectations(t)
+	eventBusMock.AssertExpectations(t)
+	assert.Error(t, err)
+}
+
+func Test_UserService_CreateUser_EventsBusError(t *testing.T) {
+	userId := "c2f46a2b-9a8e-4614-8809-fedb86acf3b1"
+	userName := "Adri"
+	userSurname := "Nico"
+	userPass := "myPass"
+	userEmail := "adri@gmail.com"
+
+	userRepositoryMock := new(storagemocks.UserRepository)
+	userRepositoryMock.On("Save", mock.Anything, mock.AnythingOfType("usuario.User")).Return(nil)
+
+	eventBusMock := new(eventmocks.Bus)
+	eventBusMock.On("Publish", mock.Anything, mock.AnythingOfType("[]event.Event")).Return(errors.New("something unexpected happened"))
+
+	userService := NewUserService(userRepositoryMock, eventBusMock)
+
+	err := userService.CreateUser(context.Background(), userId, userName, userSurname, userPass, userEmail)
+
+	userRepositoryMock.AssertExpectations(t)
+	eventBusMock.AssertExpectations(t)
 	assert.Error(t, err)
 }
 
@@ -43,19 +66,22 @@ func Test_UserService_CreateUser_Succeed(t *testing.T) {
 	userPass := "myPass"
 	userEmail := "adri@gmail.com"
 
-	user, err := usuario.NewUser(userId, userName, userSurname, userPass, userEmail)
-	require.NoError(t, err)
-
 	userRepositoryMock := new(storagemocks.UserRepository)
-	userRepositoryMock.On("Save", mock.Anything, user).Return(nil)
+	userRepositoryMock.On("Save", mock.Anything, mock.AnythingOfType("usuario.User")).Return(nil)
 
-	userService := NewUserService(userRepositoryMock)
+	eventBusMock := new(eventmocks.Bus)
+	eventBusMock.On("Publish", mock.Anything, mock.MatchedBy(func(events []event.Event) bool {
+		evt := events[0].(usuario.UserCreatedEvent)
+		return evt.UserName() == userName
+	})).Return(nil)
 
-	err = userService.CreateUser(context.Background(), userId, userName, userSurname, userPass, userEmail)
+	eventBusMock.On("Publish", mock.Anything, mock.AnythingOfType("[]event.Event")).Return(nil)
 
-	// Without this line the test would pass even though it was not calling the repo.
-	// With this line we make sure that the repo call is checked and with the user that is passed in the following line:
-	// userRepositoryMock.On("Save", mock.Anything, user).Return(nil)
+	userService := NewUserService(userRepositoryMock, eventBusMock)
+
+	err := userService.CreateUser(context.Background(), userId, userName, userSurname, userPass, userEmail)
+
 	userRepositoryMock.AssertExpectations(t)
+	eventBusMock.AssertExpectations(t)
 	assert.NoError(t, err)
 }

@@ -8,6 +8,7 @@ import (
 	"fmt"
 
 	// Trade off / Exception to hexagonal architecture to make our lives easier with uuid
+	"github.com/adnicolas/golang-hexagonal/kit/event"
 	"github.com/google/uuid"
 )
 
@@ -52,6 +53,7 @@ type User struct {
 	surname  string
 	password string
 	email    string
+	events   []event.Event
 }
 
 type GetUsersDto struct {
@@ -67,13 +69,15 @@ func NewUser(id string, name string, surname string, password string, email stri
 	if err != nil {
 		return User{}, err
 	}
-	return User{
+	user := User{
 		id:       idValueObject,
 		name:     name,
 		surname:  surname,
 		password: password,
 		email:    email,
-	}, nil
+	}
+	user.Record(NewUserCreatedEvent(idValueObject.String(), name, surname, password, email))
+	return user, nil
 }
 
 // Getters. They are not specific to the language and their use in Go is rare. However, they are the only way to achieve immutable structures
@@ -97,4 +101,16 @@ func (u User) GetEmail() string {
 
 func (u User) GetPassword() string {
 	return u.password
+}
+
+// Records a new domain event
+func (u *User) Record(evt event.Event) {
+	u.events = append(u.events, evt)
+}
+
+// Returns all the recorded domain events
+func (u User) PullEvents() []event.Event {
+	evt := u.events
+	u.events = []event.Event{}
+	return evt
 }

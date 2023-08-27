@@ -4,15 +4,18 @@ import (
 	"context"
 
 	usuario "github.com/adnicolas/golang-hexagonal/internal"
+	"github.com/adnicolas/golang-hexagonal/kit/event"
 )
 
 type UserService struct {
 	userRepository usuario.UserRepository
+	eventBus       event.Bus
 }
 
-func NewUserService(userRepository usuario.UserRepository) UserService {
+func NewUserService(userRepository usuario.UserRepository, eventBus event.Bus) UserService {
 	return UserService{
 		userRepository: userRepository,
+		eventBus:       eventBus,
 	}
 }
 
@@ -21,5 +24,8 @@ func (s UserService) CreateUser(ctx context.Context, id, name, surname, password
 	if err != nil {
 		return err
 	}
-	return s.userRepository.Save(ctx, user)
+	if err := s.userRepository.Save(ctx, user); err != nil {
+		return err
+	}
+	return s.eventBus.Publish(ctx, user.PullEvents())
 }
