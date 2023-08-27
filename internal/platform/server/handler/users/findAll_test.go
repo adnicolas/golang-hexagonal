@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	usuario "github.com/adnicolas/golang-hexagonal/internal"
-	"github.com/adnicolas/golang-hexagonal/kit/bus/busmocks"
+	"github.com/adnicolas/golang-hexagonal/kit/query/querymocks"
 
 	"github.com/adnicolas/golang-hexagonal/internal/platform/storage/storagemocks"
 	"github.com/gin-gonic/gin"
@@ -18,7 +18,7 @@ import (
 )
 
 func TestController_FindAll(t *testing.T) {
-	queryBus := new(busmocks.Bus)
+	queryBus := new(querymocks.Bus)
 
 	gin.SetMode(gin.TestMode)
 	r := gin.New()

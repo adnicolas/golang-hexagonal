@@ -1,25 +1,15 @@
-package bus
+package query
 
 import "context"
 
 type Bus interface {
-	DispatchCommand(context.Context, Command) error
-	RegisterCommand(Type, CommandHandler)
 	DispatchQuery(context.Context, Query) (QueryResponse, error)
 	RegisterQuery(Type, QueryHandler)
 }
 
-//go:generate mockery --case=snake --outpkg=busmocks --output=busmocks --name=Bus
+//go:generate mockery --case=snake --outpkg=querymocks --output=querymocks --name=Bus
 
 type Type string
-
-type Command interface {
-	Type() Type
-}
-
-type CommandHandler interface {
-	Handle(context.Context, Command) error
-}
 
 type QueryResponse interface{}
 

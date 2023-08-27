@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 
-	"github.com/adnicolas/golang-hexagonal/kit/bus"
+	"github.com/adnicolas/golang-hexagonal/kit/query"
 )
 
-const UserQueryType bus.Type = "query.fetching.users"
+const UserQueryType query.Type = "query.fetching.users"
 
 type UserQuery struct{}
 
@@ -15,7 +15,7 @@ func NewUserQuery() UserQuery {
 	return UserQuery{}
 }
 
-func (c UserQuery) Type() bus.Type {
+func (c UserQuery) Type() query.Type {
 	return UserQueryType
 }
 
@@ -30,8 +30,8 @@ func NewUserQueryHandler(service UserService) UserQueryHandler {
 	}
 }
 
-// Handle implements the bus.QueryHandler interface
-func (handler UserQueryHandler) Handle(ctx context.Context, qry bus.Query) (bus.QueryResponse, error) {
+// Handle implements the query.QueryHandler interface
+func (handler UserQueryHandler) Handle(ctx context.Context, qry query.Query) (query.QueryResponse, error) {
 	// Casting of the generic to the user query
 	_, ok := qry.(UserQuery)
 	if !ok {

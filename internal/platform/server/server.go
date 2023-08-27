@@ -10,7 +10,8 @@ import (
 
 	"github.com/adnicolas/golang-hexagonal/internal/platform/server/handler/health"
 	"github.com/adnicolas/golang-hexagonal/internal/platform/server/handler/users"
-	"github.com/adnicolas/golang-hexagonal/kit/bus"
+	"github.com/adnicolas/golang-hexagonal/kit/command"
+	"github.com/adnicolas/golang-hexagonal/kit/query"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/net/context"
 )
@@ -20,16 +21,18 @@ type Server struct {
 	httpAddr        string
 	shutdownTimeout time.Duration
 	// deps
-	bus bus.Bus
+	commandBus command.Bus
+	queryBus   query.Bus
 }
 
 // Gin wrapper
-func New(ctx context.Context, host string, port uint, shutdownTimeout time.Duration, myBus bus.Bus) (context.Context, Server) {
+func New(ctx context.Context, host string, port uint, shutdownTimeout time.Duration, cmdBus command.Bus, qryBus query.Bus) (context.Context, Server) {
 	srv := Server{
 		engine:          gin.New(),
 		httpAddr:        fmt.Sprintf("%s:%d", host, port),
 		shutdownTimeout: shutdownTimeout,
-		bus:             myBus,
+		commandBus:      cmdBus,
+		queryBus:        qryBus,
 	}
 
 	// Global logger middleware
@@ -70,8 +73,8 @@ func (s *Server) Run(ctx context.Context) error {
 
 func (s *Server) registerRoutes() {
 	s.engine.GET("/health", health.CheckHandler())
-	s.engine.POST("/user", users.CreateController(s.bus))
-	s.engine.GET("/users", users.FindAllController(s.bus))
+	s.engine.POST("/user", users.CreateController(s.commandBus))
+	s.engine.GET("/users", users.FindAllController(s.queryBus))
 }
 
 func serverContext(ctx context.Context) context.Context {
