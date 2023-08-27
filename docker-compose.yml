@@ -1,8 +1,15 @@
 services:
-  metadata-db:
-    build: ./docker/metadata-db
+  gohex-api:
+    build: .
+    environment:
+      GOHEX_HOST: 0.0.0.0
+      GOHEX_DBHOST: metadata-db
     ports:
-      - 5433:5432
+      - 8081:8081
+  metadata-db:
+    build: ./metadata-db
+    ports:
+      - 5432:5432
     environment:
       - POSTGRES_DB=metadata
       - POSTGRES_PASSWORD=dockerized_metadata

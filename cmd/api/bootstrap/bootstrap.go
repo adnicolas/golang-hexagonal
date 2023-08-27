@@ -66,7 +66,7 @@ type config struct {
 	DbUser     string        `default:"postgres"`
 	DbPassword string        `default:"dockerized_metadata"`
 	DbHost     string        `default:"localhost"`
-	DbPort     uint          `default:"5433"`
+	DbPort     uint          `default:"5432"`
 	DbName     string        `default:"metadata"`
 	DbTimeout  time.Duration `default:"5s"`
 }
